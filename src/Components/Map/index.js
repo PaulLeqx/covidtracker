@@ -4,42 +4,36 @@ import franceDepartments from "@svg-maps/france.departments";
 import {SVGMap} from "react-svg-map";
 
 const Map = () => {
-  const [lastDepartementName, setLastDepartementName] = useState(null);
+  // const [lastDepartementName, setLastDepartementName] = useState(null);
   const [departementName, setDepartementName] = useState(null);
   const [departementData, setDepartementData] = useState(null);
+  // const [toggleFetch, setToggleFetch] = useState(false);
+
   const handleOver = (e) => {
-    const departement = e.target;
-    setDepartementName(departement.getAttribute('name'));
+    setDepartementName(e.target.getAttribute('name'));
   }
 
   useEffect(() => {
-    if(departementName && !departementData || departementName !== lastDepartementName) {
-      const fetchData = async () => {
-        await axios.get(`https://coronavirusapi-france.now.sh/AllDataByDepartement?Departement=${departementName}`)
-        .then((response) => {
-          let departementAllData = response.data.allDataByDepartement;
-          let departementLastData = departementAllData[departementAllData.length-1];
-          setDepartementData(departementLastData);
-          setLastDepartementName(departementName);
-        })
-        .catch((error) => {
-          console.log(error);
-        })
-      }
-      fetchData();
+    fetchData()
+    .then((response) =>  {
+      console.log(response);
+    })
+  }, [departementName]);
 
-    }
-
-    if(departementData !== null && departementName === departementData.nom) {
-      console.log(departementData);
-    }
-  }, [departementName, departementData]);
+  const fetchData = async () => {
+    const response = await axios.get(`https://coronavirusapi-france.now.sh/AllDataByDepartement?Departement=${departementName}`);
+    const departementAllData = await response.data.allDataByDepartement;
+    const lastDepartementData = await departementAllData[departementAllData.length-1];
+    return lastDepartementData;
+  }
+  
 
   return (
     <div>
       <SVGMap 
         map={franceDepartments} 
         onLocationMouseOver={(evt) => handleOver(evt)}
+        //onLocationMouseExit={() => handleMouseOut()}
       />
     </div>
   );
