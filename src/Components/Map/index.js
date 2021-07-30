@@ -10,14 +10,20 @@ const Map = () => {
   const [lastDepartementName, setLastDepartementName] = useState('');
   const [departementName, setDepartementName] = useState(null);
   const [departementData, setDepartementData] = useState(null);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState({
+    initial: true,
+    clicked: false
+  });
 
   const handleClick = (e) => {
     if(e.target.getAttribute('name') === "Ville de Paris") {
       setDepartementName("Paris");
+      setLoading({initial: false, clicked: true});
     } else {
       setDepartementName(e.target.getAttribute('name'));
+      setLoading({initial: false, clicked: true});
     }
+    console.log(e.target);
   }
   const handleFocus = (e) => {
     e.target.setAttribute("aria-checked", true);
@@ -27,14 +33,12 @@ const Map = () => {
   }
 
   useEffect(() => {
-    setLoading(true);
     fetchData()
     .then((response) =>  {
       setDepartementData(response);
-      //console.log(response);
       if(response) {
         setLastDepartementName(departementName);
-        setLoading(false);
+        setLoading({clicked: false, initial: loading.initial});
       }
     })
     .catch((err) => {
@@ -68,7 +72,7 @@ const Map = () => {
         </div>
       ) : 
         null}
-      {loading ? (
+      {!loading.initial && loading.clicked ? (
         <div className="lds-container commun">
           <div className="lds-ellipsis">
             <div></div>

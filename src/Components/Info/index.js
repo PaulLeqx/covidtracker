@@ -1,7 +1,7 @@
 
 const Info = ({...props}) => {
   return (
-    <div>
+    <div className="info--content">
       <h2>{props.departementData.nom}</h2>
       <ul>
         <li>Décès : {props.departementData.deces}</li>
