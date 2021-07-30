@@ -17,6 +17,10 @@
   position: absolute;
 }
 
+.svg-map__location[aria-checked=true] {
+  fill: red;
+}
+
 /*LOADER*/
 
 .lds-container{

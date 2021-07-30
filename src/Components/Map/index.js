@@ -13,7 +13,17 @@ const Map = () => {
   const [loading, setLoading] = useState(false);
 
   const handleClick = (e) => {
-    setDepartementName(e.target.getAttribute('name'));
+    if(e.target.getAttribute('name') === "Ville de Paris") {
+      setDepartementName("Paris");
+    } else {
+      setDepartementName(e.target.getAttribute('name'));
+    }
+  }
+  const handleFocus = (e) => {
+    e.target.setAttribute("aria-checked", true);
+  }
+  const handleblur = (e) => {
+    e.target.setAttribute("aria-checked", false);
   }
 
   useEffect(() => {
@@ -36,6 +46,7 @@ const Map = () => {
     const response = await axios.get(`https://coronavirusapi-france.now.sh/AllDataByDepartement?Departement=${departementName}`);
     const departementAllData = await response.data.allDataByDepartement;
     const lastDepartementData = await departementAllData[departementAllData.length-1];
+    console.log(response);
     return lastDepartementData;
   }
   
@@ -71,6 +82,8 @@ const Map = () => {
         <SVGMap 
           map={franceDepartments} 
           onLocationClick={(evt) => handleClick(evt)}
+          onLocationFocus={(evt) => handleFocus(evt)}
+          onLocationBlur={(evt) => handleblur(evt)}
         />
       </div>
     </div>
