@@ -1,5 +1,9 @@
+import './index.css';
+
 const Header = () => (
-  <h1>France Covid Tracker</h1>
-)
+  <header>
+    <h1 className="header--title">France Covid Tracker</h1>
+  </header>
+);
 
 export default Header;
