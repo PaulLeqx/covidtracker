@@ -36,8 +36,22 @@ h2 {
   margin: 0;
 }
 
-/*LOADER*/
+/* COUNTRY INFO */
+.country--info{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
 
+.country--info__ul {
+  display: flex;
+}
+.country--info__li{
+  margin-left: 32px;
+}
+
+
+/*LOADER*/
 .lds-container{
   height: 200px;
   width: 200px;

@@ -2,7 +2,8 @@ import { useEffect, useState } from 'react';
 import axios from 'axios';
 import franceDepartments from "@svg-maps/france.departments";
 import {SVGMap} from "react-svg-map";
-import Info from '../Info';
+import Info from '../DepartementInfo';
+import CountryInfo from '../CountryInfo';
 
 import './index.css';
 
@@ -14,6 +15,7 @@ const Map = () => {
     initial: true,
     clicked: false
   });
+  const [countryData, setCountryData] = useState(null);
 
   const handleClick = (e) => {
     if(e.target.getAttribute('name') === "Ville de Paris") {
@@ -23,7 +25,6 @@ const Map = () => {
       setDepartementName(e.target.getAttribute('name'));
       setLoading({initial: false, clicked: true});
     }
-    console.log(e.target);
   }
   const handleFocus = (e) => {
     e.target.setAttribute("aria-checked", true);
@@ -33,7 +34,17 @@ const Map = () => {
   }
 
   useEffect(() => {
-    fetchData()
+    fetchCountryData()
+    .then((response) => {
+      setCountryData(response.data.FranceGlobalLiveData[0]);
+    })
+    .catch((err) => {
+      console.log(err);
+    })
+  }, []);
+
+  useEffect(() => {
+    fetchDepartementData()
     .then((response) =>  {
       setDepartementData(response);
       if(response) {
@@ -46,17 +57,21 @@ const Map = () => {
     })
   }, [departementName]);
 
-  const fetchData = async () => {
+  const fetchCountryData = async () => {
+    const response = await axios.get('https://coronavirusapi-france.now.sh/FranceLiveGlobalData');
+    return response;
+  }
+
+  const fetchDepartementData = async () => {
     const response = await axios.get(`https://coronavirusapi-france.now.sh/AllDataByDepartement?Departement=${departementName}`);
     const departementAllData = await response.data.allDataByDepartement;
     const lastDepartementData = await departementAllData[departementAllData.length-1];
-    console.log(response);
     return lastDepartementData;
   }
   
 
   return (
-    <div>
+    <div className="wrapper">
       {!departementName ? (
         <div>
           <h2 className="commun" >Cliquez sur un departement</h2>
@@ -64,9 +79,7 @@ const Map = () => {
       ) : null}
       {departementName === lastDepartementName ? (
         <div className="info commun">
-          {/* <h1>{departementData.nom}</h1> */}
-          <Info 
-            departementName={departementName} 
+          <Info
             departementData={departementData}
           />
         </div>
@@ -89,6 +102,10 @@ const Map = () => {
           onLocationFocus={(evt) => handleFocus(evt)}
           onLocationBlur={(evt) => handleblur(evt)}
         />
+      </div>
+      <div>
+        {countryData && <CountryInfo countryData={countryData} />}
+        
       </div>
     </div>
   );
